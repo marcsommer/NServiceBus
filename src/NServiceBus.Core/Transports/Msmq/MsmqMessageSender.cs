@@ -3,6 +3,7 @@ namespace NServiceBus.Transports.Msmq
     using System;
     using System.Messaging;
     using System.Transactions;
+    using NServiceBus.ConsistencyGuarantees;
     using NServiceBus.Pipeline;
     using NServiceBus.Transports.Msmq.Config;
     using NServiceBus.Unicast.Queuing;
