@@ -66,7 +66,7 @@ namespace NServiceBus.Transports.Msmq
                     MessageQueueTransaction receiveTransaction;
                     context.TryGet(out receiveTransaction);
 
-                    if (sendOptions.MimimumConsistencyGuarantee is AtomicWithReceiveOperation && receiveTransaction != null)
+                    if (sendOptions.MinimumConsistencyGuarantee is AtomicWithReceiveOperation && receiveTransaction != null)
                     {
                         q.Send(toSend, receiveTransaction);
                     }
