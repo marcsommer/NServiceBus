@@ -61,9 +61,7 @@
             .Check();
 
             var endpointIsTransactional = context.Settings.Get<bool>("Transactions.Enabled");
-            var doNotUseDTCTransactions = context.Settings.Get<bool>("Transactions.SuppressDistributedTransactions");
-
-
+           
             if (!context.Settings.GetOrDefault<bool>("Endpoint.SendOnly"))
             {
                 //todo: move this to the external distributor
@@ -89,9 +87,7 @@
                 settings = new MsmqConnectionStringBuilder(connectionString).RetrieveSettings();
             }
 
-            context.Container.ConfigureComponent<MsmqMessageSender>(DependencyLifecycle.InstancePerCall)
-                .ConfigureProperty(t => t.Settings, settings)
-                .ConfigureProperty(t => t.SuppressDistributedTransactions, doNotUseDTCTransactions);
+            context.Container.ConfigureComponent(b=>new MsmqMessageSender(settings), DependencyLifecycle.InstancePerCall);
 
             context.Container.ConfigureComponent<MsmqQueueCreator>(DependencyLifecycle.InstancePerCall)
                 .ConfigureProperty(t => t.Settings, settings);

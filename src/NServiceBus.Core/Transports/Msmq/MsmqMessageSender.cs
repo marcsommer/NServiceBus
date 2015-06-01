@@ -4,7 +4,6 @@ namespace NServiceBus.Transports.Msmq
     using System.Messaging;
     using System.Transactions;
     using NServiceBus.ConsistencyGuarantees;
-    using NServiceBus.Pipeline;
     using NServiceBus.Transports.Msmq.Config;
     using NServiceBus.Unicast.Queuing;
 
@@ -13,28 +12,15 @@ namespace NServiceBus.Transports.Msmq
     /// </summary>
     public class MsmqMessageSender : ISendMessages
     {
-        readonly BehaviorContext context;
-
         /// <summary>
         /// Creates a new sender.
         /// </summary>
-        /// <param name="context"></param>
-        public MsmqMessageSender(BehaviorContext context)
+        /// <param name="settings">The current msmq settings</param>
+        public MsmqMessageSender(MsmqSettings settings)
         {
-            Guard.AgainstNull(context, "context");
-            this.context = context;
+            Guard.AgainstNull(settings, "settings");
+            this.settings = settings;
         }
-
-        /// <summary>
-        /// MsmqSettings
-        /// </summary>
-        public MsmqSettings Settings { get; set; }
-
-
-        /// <summary>
-        /// SuppressDistributedTransactions
-        /// </summary>
-        public bool SuppressDistributedTransactions { get; set; }
 
         /// <summary>
         /// Sends the given <paramref name="message"/>
@@ -48,12 +34,12 @@ namespace NServiceBus.Transports.Msmq
             var queuePath = MsmqUtilities.GetFullPath(destinationAddress);
             try
             {
-                using (var q = new MessageQueue(queuePath, false, Settings.UseConnectionCache, QueueAccessMode.Send))
+                using (var q = new MessageQueue(queuePath, false, settings.UseConnectionCache, QueueAccessMode.Send))
                 using (var toSend = MsmqUtilities.Convert(message,sendOptions))
                 {
-                    toSend.UseDeadLetterQueue = Settings.UseDeadLetterQueue;
-                    toSend.UseJournalQueue = Settings.UseJournalQueue;
-                    toSend.TimeToReachQueue = Settings.TimeToReachQueue;
+                    toSend.UseDeadLetterQueue = settings.UseDeadLetterQueue;
+                    toSend.UseJournalQueue = settings.UseJournalQueue;
+                    toSend.TimeToReachQueue = settings.TimeToReachQueue;
 
                     string replyToAddress;
 
@@ -64,7 +50,7 @@ namespace NServiceBus.Transports.Msmq
                     }
 
                     MessageQueueTransaction receiveTransaction;
-                    context.TryGet(out receiveTransaction);
+                    sendOptions.Context.TryGet(out receiveTransaction);
 
                     if (sendOptions.MinimumConsistencyGuarantee is AtomicWithReceiveOperation && receiveTransaction != null)
                     {
@@ -108,7 +94,7 @@ namespace NServiceBus.Transports.Msmq
 
         MessageQueueTransactionType GetTransactionTypeForSend()
         {
-            if (!Settings.UseTransactionalQueues)
+            if (!settings.UseTransactionalQueues)
             {
                 return MessageQueueTransactionType.None;
             }
@@ -117,5 +103,7 @@ namespace NServiceBus.Transports.Msmq
                        ? MessageQueueTransactionType.Automatic
                        : MessageQueueTransactionType.Single;
         }
+
+        MsmqSettings settings;
     }
 }
