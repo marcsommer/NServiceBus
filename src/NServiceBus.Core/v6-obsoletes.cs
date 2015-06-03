@@ -152,7 +152,7 @@ namespace NServiceBus.Unicast
            Message = "Turn best practices check off using configuration.DisableFeature<BestPracticeEnforcement>()",
            RemoveInVersion = "7.0",
            TreatAsErrorFromVersion = "6.0")]
-        public bool EnforceMessagingBestPractices { get { throw new NotImplementedException(); } set { throw new NotImplementedException(); } } 
+        public bool EnforceMessagingBestPractices { get { throw new NotImplementedException(); } set { throw new NotImplementedException(); } }
     }
 
     [ObsoleteEx(
@@ -466,7 +466,7 @@ namespace NServiceBus.Unicast
         }
     }
 
-    
+
 }
 
 
@@ -495,7 +495,7 @@ namespace NServiceBus
         {
             throw new NotImplementedException();
         }
-        
+
     }
 
 }
@@ -522,5 +522,18 @@ namespace NServiceBus.Transports.Msmq
         {
             throw new NotImplementedException();
         }
+    }
+}
+
+namespace NServiceBus.Unicast
+{
+    using System;
+
+    public partial class DeliveryMessageOptions
+    {
+
+        [ObsoleteEx(RemoveInVersion = "7.0", TreatAsErrorFromVersion = "6.0", Message = "Use the ConsistencyGuarantee class instead")]
+        public bool EnlistInReceiveTransaction { get { throw new NotImplementedException(); } set { throw new NotImplementedException(); } }
+
     }
 }
