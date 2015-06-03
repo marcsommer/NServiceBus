@@ -2,7 +2,6 @@
 {
     using System;
     using NServiceBus.Extensibility;
-    using NServiceBus.Unicast;
 
     /// <summary>
     /// 
@@ -24,7 +23,6 @@
                 : base(parentContext)
             {
                 Body = body;
-                DeliveryMessageOptions = parentContext.DeliveryMessageOptions;
                 MessageType = parentContext.MessageType;
                 Extensions = parentContext.Extensions;
             }
@@ -33,11 +31,6 @@
             /// The logical message type
             /// </summary>
             public Type MessageType { get; private set; }
-
-            /// <summary>
-            /// 
-            /// </summary>
-            public DeliveryMessageOptions DeliveryMessageOptions { get; private set; }
 
             /// <summary>
             /// 
